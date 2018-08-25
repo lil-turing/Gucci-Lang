@@ -2,6 +2,7 @@ package lilturing.guccilang;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ public class Interpret {
     private static HashMap<String, Integer> labels = new HashMap<>();
     private static HashMap<String, Integer> subroutines = new HashMap<>();
     private static final int[] i = {1};
+    private static final DecimalFormat df = new DecimalFormat("0.###");
 
     static void run() {
         try {
@@ -30,30 +32,30 @@ public class Interpret {
                 match(lines.get(i), "I fuck a bitch, her name is (\\S+)", m -> {
                     labels.put(m.group(1), finalI);
                 });
-                match(lines.get(i), "Told (\\S+) I don't do confessions", m -> {
+                match(lines.get(i), "(\\S+) love do cocaine", m -> {
                     subroutines.put(m.group(1), finalI);
                 });
             }
 
             //now walk program
 
-            enterFrame(0);
+            initFrame();
             final boolean[] skipSub = {false};
 
             for (; i[0] < lines.size(); i[0]++) {
                 String line = lines.get(i[0]);
                 if (line.charAt(0) == '(') continue;
                 if (skipSub[0]) {
-                    match(line, "Ooh", m -> {
+                    match(line, "Ooh|Huh", m -> {
                         skipSub[0] = false;
                     });
                     continue;
                 }
                 if (match(line, "Can't tell me shit", m -> {
-                    System.out.println(peek());
+                    System.out.println(df.format(peek()));
                 }));
                 else if (match(line, "I can't buy a bitch no wedding ring", m -> {
-                    System.out.println(getAcc());
+                    System.out.println(df.format(getAcc()));
                 }));
                 else if (match(line, "Rather fuck a( (\\S+))? bitch named (\\S+)", m -> {
                     if (m.groupCount() < 2) {
@@ -126,22 +128,28 @@ public class Interpret {
                 else if (match(line, "I came in with the sauce", m -> {
                     pushExt();
                 }));
-                else if (match(line, "(\\S+) love do cocaine", m -> {
-                    int t = subroutines.get(m.group(1));
-                    enterFrame(i[0]);
-                    i[0] = t;
+                else if (match(line, "I been poppin (\\S+) since I was (born|(\\d+))", m -> {
+                    int pop;
+                    if (m.group(2).equals("born")) pop = 0;
+                    else pop = Integer.parseInt(m.group(2));
+                    int to = subroutines.get(m.group(1));
+                    enterFrame(i[0], pop);
+                    i[0] = to;
                 }));
-                else if (match(line, "Told (\\S+) I don't do confessions", m -> {
+                else if (match(line, "(\\S+) love do cocaine", m -> {
                     skipSub[0] = true;
                 }));
                 else if (match(line, "Ooh", m -> {
                     i[0] = exitFrame();
                 }));
+                else if (match(line, "Huh", m -> {
+                    i[0] = exitFrame(false);
+                }));
             }
 
         } catch (Exception e) {
             System.err.println("fuck up on line " + i[0]);
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 

@@ -4,7 +4,6 @@ import java.util.Stack;
 
 class Language {
     private static Stack<Frame> callStack = new Stack<>();
-    private static Stack<Double> valueStack = new Stack<>();
     private static double cmpFlag = 0;
 
     static class Frame {
@@ -12,18 +11,37 @@ class Language {
         double acc = 0,
                ext = 0;
         final int call;
+        Stack<Double> valueStack = new Stack<>();
     }
 
     private static Frame frame() {
         return callStack.peek();
     }
 
-    static void enterFrame(int call) {
+    static void initFrame() {
+        callStack.push(new Frame(0));
+    }
+
+    static void enterFrame(int call, int pop) {
+        Frame f = frame();
         callStack.push(new Frame(call));
+        for (int i = 0; i < pop; i++) {
+            frame().valueStack.push(f.valueStack.pop());
+        }
+    }
+
+    static int exitFrame(boolean pop) {
+        Frame f = callStack.pop();
+        if (pop) {
+            while (!f.valueStack.isEmpty()) {
+                frame().valueStack.push(f.valueStack.pop());
+            }
+        }
+        return f.call;
     }
 
     static int exitFrame() {
-        return callStack.pop().call;
+        return exitFrame(true);
     }
 
     static double increment() {
@@ -52,7 +70,7 @@ class Language {
     }
 
     static void push(double a) {
-        valueStack.push(a);
+        frame().valueStack.push(a);
     }
 
     static void popToAcc() {
@@ -96,10 +114,10 @@ class Language {
     }
 
     static double peek() {
-        return valueStack.peek();
+        return frame().valueStack.peek();
     }
 
     static double pop() {
-        return valueStack.pop();
+        return frame().valueStack.pop();
     }
 }

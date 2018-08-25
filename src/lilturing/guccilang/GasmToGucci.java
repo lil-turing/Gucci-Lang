@@ -14,7 +14,13 @@ public class GasmToGucci {
 
             for (String line : lines) {
                 line = line.trim(); // allow indentation/formatting in the gasm dialect
-                if (match(line, "print_peek", m -> {
+                if (match(line, "##(.*)", m -> {
+                    sb.append("( ").append(m.group(1)).append(" )\n");
+                }));
+                if (match(line, "#(.*)", m -> {
+                    // nop
+                }));
+                else if (match(line, "print_peek", m -> {
                     sb.append("Can't tell me shit\n");
                 }));
                 else if(match(line, "set_label (\\S+)", m -> {
@@ -90,17 +96,18 @@ public class GasmToGucci {
                 else if (match(line, "push_ext", m -> {
                     sb.append("I came in with the sauce\n");
                 }));
-                else if (match(line, "call (\\S+)", m -> {
-                    sb.append(m.group(1)).append(" love do cocaine\n");
+                else if (match(line, "call (\\S+) with (\\d+)", m -> {
+                    int p = Integer.parseInt(m.group(2));
+                    sb.append("I been poppin ").append(m.group(1)).append(" since I was ").append(p == 0 ? "born" : p).append("\n");
                 }));
                 else if (match(line, "subroutine (\\S+)", m -> {
-                    sb.append("Told ").append(m.group(1)).append(" I don't do confessions\n");
+                    sb.append(m.group(1)).append(" love do cocaine\n");
                 }));
                 else if (match(line, "return", m -> {
                     sb.append("Ooh\n");
                 }));
-                else if (match(line, "#(.*)", m -> {
-                    sb.append("( ").append(m.group(1)).append(" )\n");
+                else if (match(line, "discard", m -> {
+                    sb.append("Huh\n");
                 }));
             }
 
