@@ -46,7 +46,7 @@ public class Interpret {
                 String line = lines.get(i[0]);
                 if (line.charAt(0) == '(') continue;
                 if (skipSub[0]) {
-                    match(line, "Ooh|Huh", m -> {
+                    match(line, "Wow", m -> {
                         skipSub[0] = false;
                     });
                     continue;
@@ -127,6 +127,9 @@ public class Interpret {
                 }));
                 else if (match(line, "I came in with the sauce", m -> {
                     pushExt();
+                }));
+                else if (match(line, "Take a lot of shit, forgot what happened", m -> {
+                    clearStack();
                 }));
                 else if (match(line, "I been poppin (\\S+) since I was (born|(\\d+))", m -> {
                     int pop;

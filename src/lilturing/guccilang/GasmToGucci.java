@@ -109,6 +109,12 @@ public class GasmToGucci {
                 else if (match(line, "discard", m -> {
                     sb.append("Huh\n");
                 }));
+                else if (match(line, "clear_stack", m -> {
+                    sb.append("Take a lot of shit, forgot what happened\n");
+                }));
+                else if (match(line, "end_subroutine", m -> {
+                    sb.append("Wow\n");
+                }));
             }
 
             System.out.println(sb.toString());

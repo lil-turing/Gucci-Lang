@@ -120,4 +120,8 @@ class Language {
     static double pop() {
         return frame().valueStack.pop();
     }
+
+    static void clearStack() {
+        frame().valueStack.clear();
+    }
 }
